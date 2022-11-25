@@ -1,4 +1,4 @@
-// PART 1 - SERVICES INTEGRATION - REG
+import {authenticate} from '@loopback/authentication';
 import {service} from '@loopback/core/dist/service';
 import {
   Count,
@@ -18,13 +18,22 @@ import {
   del,
   requestBody,
   response,
+  HttpErrors,
 } from '@loopback/rest';
+
+// PART 2.1 - AUTH JWT - TOKEN GEN
+import {Keys} from '../config/keys';
 import {User} from '../models';
+import {Credentials} from '../models/credentials.model';
 import {UserRepository} from '../repositories';
 // PART 1 - SERVICES INTEGRATION - REG
 import {AuthenticationService} from '../services';
 const fetch = require('node-fetch');
+//import fetch from 'node-fetch';
+//import * as fetch from 'node-fetch';
 
+
+@authenticate('admin')
 
 export class UserController {
   constructor(
@@ -32,8 +41,39 @@ export class UserController {
     public userRepository : UserRepository,
     // PART 1 - SERVICES INTEGRATION - REG
     @service(AuthenticationService)
-    public servicioAutenticacion : AuthenticationService
+    public serviceAuthentication : AuthenticationService
   ) {}
+
+  @post('/login', {
+    responses: {
+      '200': {
+        description: 'Identificación de usuarios'
+      }
+    }
+  })
+  async login(
+    @requestBody() credentials : Credentials
+  ) {
+    let u = await this.serviceAuthentication.LoginUser(credentials.email, credentials.password);
+
+    if(u)
+    {
+      let token = this.serviceAuthentication.GenerateJwtToken(u);
+
+      return {
+        data: {
+          name: u.firstName,
+          email: u.email,
+          id: u.id
+        },
+        tk: token
+      }
+    }
+    else
+    {
+      throw new HttpErrors[401]('Datos inválidos.');
+    }
+  }
 
   @post('/users')
   @response(200, {
@@ -53,27 +93,31 @@ export class UserController {
     })
     user: Omit<User, 'id'>,
   ): Promise<User> {
-      // BEGIN PART 1 - SERVICES INTEGRATION - REG
-      let clave = this.servicioAutenticacion.GenerarClave();
-      let claveCifrada = this.servicioAutenticacion.CifrarClave(clave);
+    // return this.userRepository.create(user);
 
-      user.password = claveCifrada;
+    // BEGIN PART 1 - SERVICES INTEGRATION - REG
+    let password = this.serviceAuthentication.GeneratePassword();
+    let encryptPassword = this.serviceAuthentication.EncryptPassword(password);
 
-      let u = await this.userRepository.create(user);
+    user.password = encryptPassword;
 
-      // Notificar al usuario
-      let destino = user.email;
-      let asunto = 'Registro en la plataforma';
-      let contenido = `Hola ${user.firstName} su nombre de usuario es: ${user.email} y su contraseña es: ${clave}.`;
+    let u = await this.userRepository.create(user);
 
-      fetch(`http://localhost:5000/gmail?destino=${destino}&asunto=${asunto}&contenido=${contenido}`)
-      .then((data:any)  => {
-        console.log(data);
-      });
+    // Notificar al usuario
+    let destination = user.email;
+    let subject = 'Registro en la plataforma';
+    let content = `Hola, ${user.firstName} su correo electrónico es: ${user.email} y su contraseña es: ${password}.`;
 
-      return u;
-      // END PART 1 - SERVICES INTEGRATION - REG
+    fetch(`${Keys.NotificationsServiceUrl}/gmail?destino=${destination}&asunto=${subject}&contenido=${content}`)
+    .then((data:any)  => {
+      console.log(data);
+    });
+
+    return u;
+    // END PART 1 - SERVICES INTEGRATION - REG
   }
+
+  @authenticate.skip()
 
   @get('/users/count')
   @response(200, {
@@ -85,6 +129,8 @@ export class UserController {
   ): Promise<Count> {
     return this.userRepository.count(where);
   }
+
+  @authenticate.skip()
 
   @get('/users')
   @response(200, {

@@ -1,10 +1,6 @@
 {
   "@loopback/cli": {
     "packageManager": "npm",
-<<<<<<< HEAD
-    "version": "4.1.3"
-=======
-    "version": "4.1.4"
->>>>>>> 1-dev-ds-dot-env
+    "version": "4.1.5"
   }
 }

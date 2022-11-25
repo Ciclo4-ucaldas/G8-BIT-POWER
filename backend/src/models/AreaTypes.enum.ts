@@ -1,4 +1,5 @@
-export enum AreaTypes {
-  PARKING_LOT = 'parkingLot',
-  UTILITY_ROOM = 'utilityRoom'
+export enum AreaTypes
+{
+  ParkingLot = 0,
+  UtilityRoom = 1
 }

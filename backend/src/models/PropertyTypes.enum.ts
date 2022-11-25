@@ -1,5 +1,6 @@
-export enum PropertyTypes {
-  apartment,
-  studioApartment,
-  Local
+export enum PropertyTypes
+{
+  Apartment = 0,
+  StudioApartment = 1,
+  Local = 2
 }

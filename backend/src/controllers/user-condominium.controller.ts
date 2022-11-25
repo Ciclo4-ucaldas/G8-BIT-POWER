@@ -17,22 +17,22 @@ import {
 } from '@loopback/rest';
 import {
   User,
-  Management,
+  Condominium,
 } from '../models';
 import {UserRepository} from '../repositories';
 
-export class UserManagementController {
+export class UserCondominiumController {
   constructor(
     @repository(UserRepository) protected userRepository: UserRepository,
   ) { }
 
-  @get('/users/{id}/management', {
+  @get('/users/{id}/condominium', {
     responses: {
       '200': {
-        description: 'User has one Management',
+        description: 'User has one Condominium',
         content: {
           'application/json': {
-            schema: getModelSchemaRef(Management),
+            schema: getModelSchemaRef(Condominium),
           },
         },
       },
@@ -40,16 +40,16 @@ export class UserManagementController {
   })
   async get(
     @param.path.string('id') id: string,
-    @param.query.object('filter') filter?: Filter<Management>,
-  ): Promise<Management> {
-    return this.userRepository.management(id).get(filter);
+    @param.query.object('filter') filter?: Filter<Condominium>,
+  ): Promise<Condominium> {
+    return this.userRepository.condominium(id).get(filter);
   }
 
-  @post('/users/{id}/management', {
+  @post('/users/{id}/condominium', {
     responses: {
       '200': {
         description: 'User model instance',
-        content: {'application/json': {schema: getModelSchemaRef(Management)}},
+        content: {'application/json': {schema: getModelSchemaRef(Condominium)}},
       },
     },
   })
@@ -58,22 +58,22 @@ export class UserManagementController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Management, {
-            title: 'NewManagementInUser',
+          schema: getModelSchemaRef(Condominium, {
+            title: 'NewCondominiumInUser',
             exclude: ['id'],
-            optional: ['userId']
+            optional: ['adminId']
           }),
         },
       },
-    }) management: Omit<Management, 'id'>,
-  ): Promise<Management> {
-    return this.userRepository.management(id).create(management);
+    }) condominium: Omit<Condominium, 'id'>,
+  ): Promise<Condominium> {
+    return this.userRepository.condominium(id).create(condominium);
   }
 
-  @patch('/users/{id}/management', {
+  @patch('/users/{id}/condominium', {
     responses: {
       '200': {
-        description: 'User.Management PATCH success count',
+        description: 'User.Condominium PATCH success count',
         content: {'application/json': {schema: CountSchema}},
       },
     },
@@ -83,28 +83,28 @@ export class UserManagementController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Management, {partial: true}),
+          schema: getModelSchemaRef(Condominium, {partial: true}),
         },
       },
     })
-    management: Partial<Management>,
-    @param.query.object('where', getWhereSchemaFor(Management)) where?: Where<Management>,
+    condominium: Partial<Condominium>,
+    @param.query.object('where', getWhereSchemaFor(Condominium)) where?: Where<Condominium>,
   ): Promise<Count> {
-    return this.userRepository.management(id).patch(management, where);
+    return this.userRepository.condominium(id).patch(condominium, where);
   }
 
-  @del('/users/{id}/management', {
+  @del('/users/{id}/condominium', {
     responses: {
       '200': {
-        description: 'User.Management DELETE success count',
+        description: 'User.Condominium DELETE success count',
         content: {'application/json': {schema: CountSchema}},
       },
     },
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(Management)) where?: Where<Management>,
+    @param.query.object('where', getWhereSchemaFor(Condominium)) where?: Where<Condominium>,
   ): Promise<Count> {
-    return this.userRepository.management(id).delete(where);
+    return this.userRepository.condominium(id).delete(where);
   }
 }

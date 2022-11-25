@@ -1,8 +1,12 @@
-import {belongsTo, Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, belongsTo} from '@loopback/repository';
+
+// Enum
 import {AreaTypes} from './AreaTypes.enum';
 import {Property} from './property.model';
 
-// enum AreaTypes {
+
+// enum AreaTypes
+// {
 //   PARKING_LOT = 'parkingLot',
 //   UTILITY_ROOM = 'utilityRoom'
 // }
@@ -18,28 +22,29 @@ export class Area extends Entity {
   id?: string;
 
   // @property({
-  //   type: 'string',
+  //   type: 'number',
   //   required: true,
   // })
-  // areaType: string;
+  // type?: number;
 
   @property({
-    type: 'string',
+    type: 'number',
     required: true,
     jsonSchema: {
       enum: Object.values(AreaTypes),
     },
   })
-  areaType: AreaTypes;
+  type?: AreaTypes;
 
   // @property({
   //   type: 'string',
-  //   required: true,
+  //   required: false,
   // })
-  // propertyId: string;
+  // propertyId?: string;
 
+  // opcional/nullable ?
   @belongsTo(() => Property)
-  propertyId: string;
+  propertyId?: string;
 
   constructor(data?: Partial<Area>) {
     super(data);

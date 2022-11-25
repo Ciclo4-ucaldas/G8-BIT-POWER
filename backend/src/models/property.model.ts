@@ -1,10 +1,15 @@
-import {belongsTo, Entity, hasMany, model, property} from '@loopback/repository';
-import {Invoice} from './invoice.model';
+import {Entity, model, property, belongsTo, hasMany} from '@loopback/repository';
+
+// Enum
 import {PropertyTypes} from './PropertyTypes.enum';
 import {Section} from './section.model';
+import {Area} from './area.model';
+import {Invoice} from './invoice.model';
+import {User} from './user.model';
 
 
-// enum PropertyTypes {
+// enum PropertyTypes
+// {
 //   apartment,
 //   studioApartment,
 //   Local
@@ -21,13 +26,13 @@ export class Property extends Entity {
   id?: string;
 
   // @property({
-  //   type: 'string',
+  //   type: 'number',
   //   required: true,
   // })
-  // type: string;
+  // type: number;
 
   @property({
-    type: 'string',
+    type: 'number',
     required: true,
     jsonSchema: {
       enum: Object.values(PropertyTypes),
@@ -45,19 +50,13 @@ export class Property extends Entity {
     type: 'number',
     required: true,
   })
-  spaceArea: number;
+  totalArea: number;
 
   // @property({
   //   type: 'string',
   //   required: true,
   // })
-  // managementId: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  ownerId: string;
+  // condominiumId: string;
 
   // @property({
   //   type: 'string',
@@ -68,8 +67,17 @@ export class Property extends Entity {
   @belongsTo(() => Section)
   sectionId: string;
 
+  @belongsTo(() => User)
+  ownerId: string;
+
+  @hasMany(() => Area)
+  areas: Area[];
+
   @hasMany(() => Invoice)
   invoices: Invoice[];
+
+  // @hasMany(() => User)
+  // residents: User[];
 
   constructor(data?: Partial<Property>) {
     super(data);

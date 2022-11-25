@@ -1,5 +1,17 @@
-import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Entity, model, property, hasMany, hasOne} from '@loopback/repository';
+
+// Enum
+import {DocumentTypes} from './documentTypes.enum';
 import {Role} from './role.model';
+import {Condominium} from './condominium.model';
+import {Property} from './property.model';
+
+
+// enum DocumentTypes
+// {
+//   CC = 0,
+//   TI = 1
+// }
 
 
 @model()
@@ -33,11 +45,20 @@ export class User extends Entity {
   })
   secondSurname?: string;
 
+  // @property({
+  //   type: 'number',
+  //   required: true,
+  // })
+  // documentType: string;
+
   @property({
-    type: 'string',
+    type: 'number',
     required: true,
+    jsonSchema: {
+      enum: Object.values(DocumentTypes),
+    },
   })
-  documentType: string;
+  documentType: DocumentTypes;
 
   @property({
     type: 'string',
@@ -70,7 +91,7 @@ export class User extends Entity {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   password: string;
 
@@ -80,14 +101,20 @@ export class User extends Entity {
   })
   state: boolean;
 
-  // @property({
-  //   type: 'string',
-  //   required: true,
-  // })
-  // propertyId: string;
+  @property({
+    type: 'string',
+    required: true,
+  })
+  propertyId: string;
 
   @hasMany(() => Role)
   roles: Role[];
+
+  @hasMany(() => Property, {keyTo: 'ownerId'})
+  properties: Property[];
+
+  @hasOne(() => Condominium, {keyTo: 'adminId'})
+  condominium: Condominium;
 
   constructor(data?: Partial<User>) {
     super(data);

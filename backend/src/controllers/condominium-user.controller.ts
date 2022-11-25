@@ -7,21 +7,21 @@ import {
   getModelSchemaRef,
 } from '@loopback/rest';
 import {
-  Property,
+  Condominium,
   User,
 } from '../models';
-import {PropertyRepository} from '../repositories';
+import {CondominiumRepository} from '../repositories';
 
-export class PropertyUserController {
+export class CondominiumUserController {
   constructor(
-    @repository(PropertyRepository)
-    public propertyRepository: PropertyRepository,
+    @repository(CondominiumRepository)
+    public condominiumRepository: CondominiumRepository,
   ) { }
 
-  @get('/properties/{id}/user', {
+  @get('/condominiums/{id}/user', {
     responses: {
       '200': {
-        description: 'User belonging to Property',
+        description: 'User belonging to Condominium',
         content: {
           'application/json': {
             schema: {type: 'array', items: getModelSchemaRef(User)},
@@ -31,8 +31,8 @@ export class PropertyUserController {
     },
   })
   async getUser(
-    @param.path.string('id') id: typeof Property.prototype.id,
+    @param.path.string('id') id: typeof Condominium.prototype.id,
   ): Promise<User> {
-    return this.propertyRepository.owner(id);
+    return this.condominiumRepository.admin(id);
   }
 }

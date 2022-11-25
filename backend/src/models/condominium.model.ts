@@ -1,12 +1,12 @@
-import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Entity, model, property, belongsTo, hasMany} from '@loopback/repository';
+
+//
+import {User} from './user.model';
 import {Section} from './section.model';
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 1-dev-ds-dot-env
 @model()
-export class Management extends Entity {
+export class Condominium extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -18,7 +18,7 @@ export class Management extends Entity {
     type: 'string',
     required: true,
   })
-  condominiumName: string;
+  name: string;
 
   @property({
     type: 'string',
@@ -54,7 +54,7 @@ export class Management extends Entity {
     type: 'number',
     required: true,
   })
-  currentBudget: number;
+  budget: number;
 
   @property({
     type: 'number',
@@ -62,26 +62,25 @@ export class Management extends Entity {
   })
   totalArea: number;
 
-  @property({
-    type: 'string',
-    required: true,
-  })
-<<<<<<< HEAD
-  userId: string;
-=======
-  managerId: string;
->>>>>>> 1-dev-ds-dot-env
+  // @property({
+  //   type: 'string',
+  //   required: true,
+  // })
+  // adminId: string;
+
+  @belongsTo(() => User)
+  adminId: string;
 
   @hasMany(() => Section)
   sections: Section[];
 
-  constructor(data?: Partial<Management>) {
+  constructor(data?: Partial<Condominium>) {
     super(data);
   }
 }
 
-export interface ManagementRelations {
+export interface CondominiumRelations {
   // describe navigational properties here
 }
 
-export type ManagementWithRelations = Management & ManagementRelations;
+export type CondominiumWithRelations = Condominium & CondominiumRelations;

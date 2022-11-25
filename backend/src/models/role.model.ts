@@ -1,9 +1,12 @@
-import {belongsTo, Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, belongsTo} from '@loopback/repository';
+
+// Enum
 import {RolesList} from './RolesList.enum';
 import {User} from './user.model';
 
 
-// enum RolesList {
+// enum RolesList
+// {
 //   ADMIN = 'administrator',
 //   OWNER = 'owner',
 //   RESIDENT = 'resident'
@@ -20,19 +23,25 @@ export class Role extends Entity {
   id?: string;
 
   // @property({
-  //   type: 'string',
+  //   type: 'number',
   //   required: true,
   // })
-  // role: string;
+  // role: number;
 
   @property({
-    type: 'string',
+    type: 'number',
     required: true,
     jsonSchema: {
       enum: Object.values(RolesList),
     },
   })
-  role: RolesList;
+  type: RolesList;
+
+  // @property({
+  //   type: 'string',
+  //   required: true,
+  // })
+  // userId: string;
 
   @belongsTo(() => User)
   userId: string;

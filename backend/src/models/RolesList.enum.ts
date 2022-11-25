@@ -1,5 +1,6 @@
-export enum RolesList {
-  ADMIN = 'Administrator',
-  OWNER = 'Owner',
-  RESIDENT = 'Resident'
+export enum RolesList
+{
+  Admin = 0,
+  Owner = 1,
+  Resident = 2
 }

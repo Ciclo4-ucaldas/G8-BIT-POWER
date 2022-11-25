@@ -16,20 +16,20 @@ import {
   requestBody,
 } from '@loopback/rest';
 import {
-  Management,
+  Condominium,
   Section,
 } from '../models';
-import {ManagementRepository} from '../repositories';
+import {CondominiumRepository} from '../repositories';
 
-export class ManagementSectionController {
+export class CondominiumSectionController {
   constructor(
-    @repository(ManagementRepository) protected managementRepository: ManagementRepository,
+    @repository(CondominiumRepository) protected condominiumRepository: CondominiumRepository,
   ) { }
 
-  @get('/managements/{id}/sections', {
+  @get('/condominiums/{id}/sections', {
     responses: {
       '200': {
-        description: 'Array of Management has many Section',
+        description: 'Array of Condominium has many Section',
         content: {
           'application/json': {
             schema: {type: 'array', items: getModelSchemaRef(Section)},
@@ -42,38 +42,38 @@ export class ManagementSectionController {
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<Section>,
   ): Promise<Section[]> {
-    return this.managementRepository.sections(id).find(filter);
+    return this.condominiumRepository.sections(id).find(filter);
   }
 
-  @post('/managements/{id}/sections', {
+  @post('/condominiums/{id}/sections', {
     responses: {
       '200': {
-        description: 'Management model instance',
+        description: 'Condominium model instance',
         content: {'application/json': {schema: getModelSchemaRef(Section)}},
       },
     },
   })
   async create(
-    @param.path.string('id') id: typeof Management.prototype.id,
+    @param.path.string('id') id: typeof Condominium.prototype.id,
     @requestBody({
       content: {
         'application/json': {
           schema: getModelSchemaRef(Section, {
-            title: 'NewSectionInManagement',
+            title: 'NewSectionInCondominium',
             exclude: ['id'],
-            optional: ['managementId']
+            optional: ['condominiumId']
           }),
         },
       },
     }) section: Omit<Section, 'id'>,
   ): Promise<Section> {
-    return this.managementRepository.sections(id).create(section);
+    return this.condominiumRepository.sections(id).create(section);
   }
 
-  @patch('/managements/{id}/sections', {
+  @patch('/condominiums/{id}/sections', {
     responses: {
       '200': {
-        description: 'Management.Section PATCH success count',
+        description: 'Condominium.Section PATCH success count',
         content: {'application/json': {schema: CountSchema}},
       },
     },
@@ -90,13 +90,13 @@ export class ManagementSectionController {
     section: Partial<Section>,
     @param.query.object('where', getWhereSchemaFor(Section)) where?: Where<Section>,
   ): Promise<Count> {
-    return this.managementRepository.sections(id).patch(section, where);
+    return this.condominiumRepository.sections(id).patch(section, where);
   }
 
-  @del('/managements/{id}/sections', {
+  @del('/condominiums/{id}/sections', {
     responses: {
       '200': {
-        description: 'Management.Section DELETE success count',
+        description: 'Condominium.Section DELETE success count',
         content: {'application/json': {schema: CountSchema}},
       },
     },
@@ -105,6 +105,6 @@ export class ManagementSectionController {
     @param.path.string('id') id: string,
     @param.query.object('where', getWhereSchemaFor(Section)) where?: Where<Section>,
   ): Promise<Count> {
-    return this.managementRepository.sections(id).delete(where);
+    return this.condominiumRepository.sections(id).delete(where);
   }
 }

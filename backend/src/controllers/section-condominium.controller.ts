@@ -8,31 +8,31 @@ import {
 } from '@loopback/rest';
 import {
   Section,
-  Management,
+  Condominium,
 } from '../models';
 import {SectionRepository} from '../repositories';
 
-export class SectionManagementController {
+export class SectionCondominiumController {
   constructor(
     @repository(SectionRepository)
     public sectionRepository: SectionRepository,
   ) { }
 
-  @get('/sections/{id}/management', {
+  @get('/sections/{id}/condominium', {
     responses: {
       '200': {
-        description: 'Management belonging to Section',
+        description: 'Condominium belonging to Section',
         content: {
           'application/json': {
-            schema: {type: 'array', items: getModelSchemaRef(Management)},
+            schema: {type: 'array', items: getModelSchemaRef(Condominium)},
           },
         },
       },
     },
   })
-  async getManagement(
+  async getCondominium(
     @param.path.string('id') id: typeof Section.prototype.id,
-  ): Promise<Management> {
-    return this.sectionRepository.management(id);
+  ): Promise<Condominium> {
+    return this.sectionRepository.condominium(id);
   }
 }
