@@ -34,7 +34,6 @@ const fetch = require('node-fetch');
 
 
 @authenticate('admin')
-
 export class UserController {
   constructor(
     @repository(UserRepository)
@@ -43,7 +42,7 @@ export class UserController {
     @service(AuthenticationService)
     public serviceAuthentication : AuthenticationService
   ) {}
-
+@authenticate.skip()
   @post('/login', {
     responses: {
       '200': {
