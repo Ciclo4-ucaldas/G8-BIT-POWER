@@ -54,16 +54,17 @@ export class UserController {
     @requestBody() credentials : Credentials
   ) {
     let u = await this.serviceAuthentication.LoginUser(credentials.email, credentials.password);
-
     if(u)
     {
-      let token = this.serviceAuthentication.GenerateJwtToken(u);
-
+      let roles=await this.serviceAuthentication.roleUser(u);
+      u.roles=roles;
+      let token = await this.serviceAuthentication.GenerateJwtToken(u);
       return {
-        data: {
-          name: u.firstName,
+        data : {
+          id: u.id,
           email: u.email,
-          id: u.id
+          name: u.firstName + ' ' + u.firstSurname,
+          roles:roles
         },
         tk: token
       }
@@ -74,6 +75,7 @@ export class UserController {
     }
   }
 
+  @authenticate.skip()
   @post('/users')
   @response(200, {
     description: 'User model instance',
@@ -128,8 +130,6 @@ export class UserController {
   ): Promise<Count> {
     return this.userRepository.count(where);
   }
-
-  @authenticate.skip()
 
   @get('/users')
   @response(200, {

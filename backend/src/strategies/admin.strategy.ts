@@ -1,11 +1,12 @@
 // PART 2.2 - AUTH JWT - TOKEN VAL
 
 import {AuthenticationStrategy} from '@loopback/authentication';
-import {service} from '@loopback/core';
+import {hasInjections, service} from '@loopback/core';
 import {HttpErrors, Request} from '@loopback/rest';
 import {UserProfile} from '@loopback/security';
 //import {request} from 'http';
 import parseBearerToken from 'parse-bearer-token';
+import { Role } from '../models';
 import {AuthenticationService} from '../services';
 
 
@@ -30,14 +31,30 @@ export class EstrategiaAdministrador implements AuthenticationStrategy
 
       if(datos)
       {
-        //if(datos.data) // datos.data.role
-        //{
+        if(datos.data.roles){
           let perfil: UserProfile = Object.assign({
-            nombre: datos.data.name
-          });
-
-          return perfil;
-        //}
+            nombre: "no User"
+          }); 
+          let noHayPerfil:boolean=false;
+        datos.data.roles.forEach((rol: Role) =>{
+        console.log(rol.type);
+          if( rol.type==0) // datos.data.role
+          {
+            noHayPerfil=true;
+            //console.log("entro")
+             perfil= Object.assign({
+              nombre: datos.data.name
+            });
+          }
+        });
+        if(noHayPerfil){
+        return perfil;
+        }else{
+          throw new HttpErrors[401]('no rol de administrador.');
+        }
+      }else{
+        throw new HttpErrors[401]('no hay usuarios validos.');
+      }
       }
       else
       {
