@@ -8,16 +8,21 @@ const cryptoJS = require('crypto-js');
 // PART 2.1 - AUTH JWT TOKEN GEN
 const jwt = require('jsonwebtoken');
 import {Keys} from '../config/keys';
+import { RoleController } from '../controllers';
 import {User} from '../models';
-import {UserRepository} from '../repositories';
+import {RoleRepository, UserRepository} from '../repositories';
 
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class AuthenticationService {
-  constructor(/* Add @inject to inject parameters */
-    // PART 2.1 - AUTH JWT - TOKEN GEN
+  user:User=new User;
+  constructor(/* Add @inject to inject parameters */ 
+  // PART 2.1 - AUTH JWT - TOKEN GEN
     @repository(UserRepository)
-    public userRepository : UserRepository) {}
+    public userRepository : UserRepository,
+    @repository(RoleRepository)
+    public roleRepository:RoleRepository
+    ) {}
 
   /*
    * Add service methods here
@@ -45,7 +50,7 @@ export class AuthenticationService {
     try
     {
       let u = this.userRepository.findOne({where: {email: email, password: password}});
-
+      //
       if(u)
       {
         return u;
@@ -59,6 +64,10 @@ export class AuthenticationService {
     }
   }
 
+  roleUser(user:User){
+    return  this.roleRepository.find({where:{userId:user.id}})
+  }
+
   GenerateJwtToken(user: User)
   {
     let token = jwt.sign({
@@ -66,7 +75,8 @@ export class AuthenticationService {
       data : {
         id: user.id,
         email: user.email,
-        name: user.firstName + ' ' + user.firstSurname
+        name: user.firstName + ' ' + user.firstSurname,
+        roles:user.roles
       }
     },
       Keys.JwtPassword);
